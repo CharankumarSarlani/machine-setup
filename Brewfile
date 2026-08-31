@@ -44,5 +44,4 @@ cask "bruno"
 # VS Code extensions
 vscode "esbenp.prettier-vscode"
 vscode "ritwickdey.LiveServer"
-vscode "streetsidesoftware.code-spell-checker"
 vscode "qwtel.sqlite-viewer"

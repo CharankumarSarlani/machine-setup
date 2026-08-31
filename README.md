@@ -27,7 +27,7 @@ Four things, at most, and only the ones that apply to your machine:
 |---|---|
 | **CLI tools** | git, gh, node, deno, openjdk, sqlite, postgresql@17, colima + docker, jq, bat, tree, htop, pstree, ack, glow, tokei, telnet, watchman, imagemagick, raylib, starship |
 | **Apps** | Ghostty, VS Code, IntelliJ IDEA CE, Chrome, Obsidian, Rectangle, Bruno |
-| **VS Code** | Prettier, Live Server, Code Spell Checker, SQLite Viewer |
+| **VS Code** | Prettier, Live Server, SQLite Viewer |
 | **Shell** | starship prompt, PATH set up for the keg-only tools, `gacp` and `gp` |
 | **Git** | identity configured, `gh` logged in, `git push` works without a password |
 
@@ -43,6 +43,18 @@ gp                   # git push
 
 `gacp` sets the upstream automatically the first time you push a branch. If there's
 nothing to commit it says so and stops — that isn't an error.
+
+If the repository has no `origin` at all, `gacp` creates one on GitHub for you and
+pushes to it. The name comes from the **git root directory**, so running `gacp` from
+`acme-api/src/handlers` creates `acme-api`, not `handlers`.
+
+> **New repositories are created public.** Anything you commit becomes world-readable
+> as soon as it's pushed — so don't use `gacp` to make the first push of a repo holding
+> credentials or client code. For those, create it yourself first:
+> `gh repo create <name> --private --source=.`
+
+A repo that already has an `origin` is left alone, and if a GitHub repo of that name
+already exists, `gacp` links to it rather than creating a second one.
 
 ## Three things to do yourself
 

@@ -73,7 +73,7 @@ grep -qxF '# >>> machine-setup >>>' "$HOME/.zshrc"; check "block appended" $?
 
 echo "== Brewfile parsing"
 COUNT="$(parse_brewfile "$REPO/Brewfile" | wc -l | tr -d ' ')"
-[ "$COUNT" -eq 35 ]; check "35 entries parsed (got $COUNT)" $?
+[ "$COUNT" -eq 34 ]; check "34 entries parsed (got $COUNT)" $?
 parse_brewfile "$REPO/Brewfile" | grep -qx 'brew postgresql@17'; check "versioned formula parsed" $?
 parse_brewfile "$REPO/Brewfile" | grep -qx 'vscode qwtel.sqlite-viewer'; check "vscode entry parsed" $?
 parse_brewfile "$REPO/Brewfile" | grep -qx 'cask intellij-idea-ce'; check "cask entry parsed" $?
