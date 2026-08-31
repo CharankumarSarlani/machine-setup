@@ -27,7 +27,7 @@ Four things, at most, and only the ones that apply to your machine:
 |---|---|
 | **CLI tools** | git, gh, node, deno, openjdk, sqlite, postgresql@17, colima + docker, jq, bat, tree, htop, pstree, ack, glow, tokei, telnet, watchman, imagemagick, raylib, starship |
 | **Apps** | Ghostty, VS Code, IntelliJ IDEA CE, Chrome, Obsidian, Rectangle, Bruno |
-| **VS Code** | Prettier, Live Server, Code Spell Checker, SQLite Viewer |
+| **VS Code** | Prettier, Live Server, SQLite Viewer |
 | **Shell** | starship prompt, PATH set up for the keg-only tools, `gacp` and `gp` |
 | **Git** | identity configured, `gh` logged in, `git push` works without a password |
 
