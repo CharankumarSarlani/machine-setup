@@ -306,8 +306,20 @@ ensure_homebrew() {
   curl -fsSL "$HOMEBREW_INSTALLER_URL" -o "$installer" ||
     die "Could not download the Homebrew installer from $HOMEBREW_INSTALLER_URL"
 
-  note "Homebrew may ask for your Mac password."
-  # Shown on the console, not just logged: this is where the password prompt appears.
+  # Homebrew needs sudo to create its prefix, but NONINTERACTIVE=1 makes it run
+  # `sudo -n`, which never prompts — so it aborts with "needs to be an
+  # Administrator" even for an admin user. Take the password here instead: that
+  # caches the sudo timestamp, and Homebrew's own check then passes silently.
+  if ! sudo -n true 2>/dev/null; then
+    note "Homebrew needs your Mac password to install itself."
+    # No redirect needed: sudo reads the password from the terminal itself,
+    # not from stdin, which under curl | bash is the script.
+    if ! sudo -v; then
+      die "Homebrew needs administrator access to install. Your account must be able to run sudo."
+    fi
+  fi
+
+  # Shown on the console, not just logged: this step is slow and worth watching.
   NONINTERACTIVE=1 /bin/bash "$installer" </dev/tty 2>&1 | tee -a "$LOG_FILE"
   if [ "${PIPESTATUS[0]}" -ne 0 ]; then
     die "Homebrew failed to install. See the log for the full output."
