@@ -163,7 +163,10 @@ cleanup() {
 run() {
   local status
   log "\$ $*"
-  "$@" >"$RUN_OUT" 2>&1
+  # </dev/null matters: several of the callers below are `while read` loops fed
+  # by a here-doc, and a command that reads stdin would swallow the rest of the
+  # list and silently end the loop. It also stops anything hanging on a prompt.
+  "$@" >"$RUN_OUT" 2>&1 </dev/null
   status=$?
   cat "$RUN_OUT" >>"$LOG_FILE"
   if [ "$VERBOSE" -eq 1 ]; then
@@ -458,15 +461,17 @@ install_packages() {
   HAVE_FORMULA="$(brew list --formula -1 2>/dev/null)"
   HAVE_CASK="$(brew list --cask -1 2>/dev/null)"
 
+  # The list is read on fd 3, not stdin, so nothing invoked inside the loop can
+  # consume it — the bug that stops the run three packages in.
   local kind name
-  while read -r kind name; do
+  while read -r kind name <&3; do
     [ -n "$kind" ] || continue
     case "$kind" in
       brew) install_formula "$name" ;;
       cask) install_cask "$name" ;;
       vscode) install_vscode_ext "$name" ;;
     esac
-  done <<EOF
+  done 3<<EOF
 $(parse_brewfile "$brewfile")
 EOF
 }
@@ -491,7 +496,7 @@ install_npm_packages() {
   local have pkg
   have="$(npm ls -g --depth=0 --parseable 2>/dev/null | sed -E 's#^.*/##')"
 
-  while IFS= read -r pkg; do
+  while IFS= read -r pkg <&3; do
     pkg="$(printf '%s' "$pkg" | tr -d '[:space:]')"
     case "$pkg" in '' | \#*) continue ;; esac
 
@@ -508,7 +513,7 @@ install_npm_packages() {
     else
       fail "$pkg" "npm install -g $pkg" "$LAST_ERR"
     fi
-  done <"$list"
+  done 3<"$list"
 }
 
 # Concatenate shell/*.zsh into one self-contained block. Resolving the split
@@ -593,7 +598,7 @@ configure_git() {
   local line key value current
 
   if [ -f "$settings" ]; then
-    while IFS= read -r line; do
+    while IFS= read -r line <&3; do
       case "$line" in '' | \#*) continue ;; esac
       case "$line" in *=*) ;; *) continue ;; esac
       key="${line%%=*}"
@@ -614,7 +619,7 @@ configure_git() {
       else
         fail "git $key" "git config --global $key $value" "$LAST_ERR"
       fi
-    done <"$settings"
+    done 3<"$settings"
   fi
 
   configure_git_identity

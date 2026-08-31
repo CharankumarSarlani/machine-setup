@@ -22,6 +22,11 @@ STATE="$WORK/state"; mkdir -p "$STATE"
 
 cat > "$FAKE/bin/brew" <<STUB
 #!/bin/bash
+# Real commands may read stdin. If install.sh hands a loop's own stdin to the
+# command it invokes, that command drains the list and the loop ends early —
+# the bug that stopped a real run three packages in. Draining stdin here keeps
+# the suite honest about it.
+cat > /dev/null 2>&1
 case "\$1 \$2" in
   "shellenv "*) echo 'export HOMEBREW_PREFIX="$FAKE"'; echo 'export PATH="$FAKE/bin:\$PATH"'; exit 0 ;;
 esac
@@ -46,6 +51,11 @@ STUB
 
 cat > "$FAKE/bin/npm" <<STUB
 #!/bin/bash
+# Real commands may read stdin. If install.sh hands a loop's own stdin to the
+# command it invokes, that command drains the list and the loop ends early —
+# the bug that stopped a real run three packages in. Draining stdin here keeps
+# the suite honest about it.
+cat > /dev/null 2>&1
 [ "\$1" = "ls" ] && exit 0
 if [ "\$1" = "install" ]; then echo "\${!#}" >> "$STATE/npm-installed"; exit 0; fi
 exit 0
@@ -53,6 +63,11 @@ STUB
 
 cat > "$FAKE/bin/code" <<STUB
 #!/bin/bash
+# Real commands may read stdin. If install.sh hands a loop's own stdin to the
+# command it invokes, that command drains the list and the loop ends early —
+# the bug that stopped a real run three packages in. Draining stdin here keeps
+# the suite honest about it.
+cat > /dev/null 2>&1
 [ "\$1" = "--list-extensions" ] && { echo "esbenp.prettier-vscode"; exit 0; }
 [ "\$1" = "--install-extension" ] && { echo "\$2" >> "$STATE/ext-installed"; exit 0; }
 exit 0
@@ -60,6 +75,11 @@ STUB
 
 cat > "$FAKE/bin/gh" <<STUB
 #!/bin/bash
+# Real commands may read stdin. If install.sh hands a loop's own stdin to the
+# command it invokes, that command drains the list and the loop ends early —
+# the bug that stopped a real run three packages in. Draining stdin here keeps
+# the suite honest about it.
+cat > /dev/null 2>&1
 [ "\$1 \$2" = "auth status" ] && exit 0
 if [ "\$1 \$2" = "auth setup-git" ]; then
   touch "$STATE/gh-setup-git"
@@ -119,6 +139,11 @@ rm -f "$STATE/brew-installed" "$STATE/npm-installed" "$STATE/ext-installed"
 # Now pretend everything landed, so the second run should be a pure no-op.
 cat > "$FAKE/bin/brew" <<STUB
 #!/bin/bash
+# Real commands may read stdin. If install.sh hands a loop's own stdin to the
+# command it invokes, that command drains the list and the loop ends early —
+# the bug that stopped a real run three packages in. Draining stdin here keeps
+# the suite honest about it.
+cat > /dev/null 2>&1
 case "\$1 \$2" in "shellenv "*) echo 'export HOMEBREW_PREFIX="$FAKE"'; echo 'export PATH="$FAKE/bin:\$PATH"'; exit 0 ;; esac
 if [ "\$1" = "list" ]; then
   [ "\$2" = "--formula" ] && sed -E -n 's/^[[:space:]]*brew[[:space:]]+"([^"]+)".*/\1/p' "$REPO/Brewfile"
@@ -130,12 +155,22 @@ exit 0
 STUB
 cat > "$FAKE/bin/code" <<STUB
 #!/bin/bash
+# Real commands may read stdin. If install.sh hands a loop's own stdin to the
+# command it invokes, that command drains the list and the loop ends early —
+# the bug that stopped a real run three packages in. Draining stdin here keeps
+# the suite honest about it.
+cat > /dev/null 2>&1
 [ "\$1" = "--list-extensions" ] && { sed -E -n 's/^[[:space:]]*vscode[[:space:]]+"([^"]+)".*/\1/p' "$REPO/Brewfile"; exit 0; }
 [ "\$1" = "--install-extension" ] && { echo "\$2" >> "$STATE/ext-installed"; exit 0; }
 exit 0
 STUB
 cat > "$FAKE/bin/npm" <<'STUB'
 #!/bin/bash
+# Real commands may read stdin. If install.sh hands a loop's own stdin to the
+# command it invokes, that command drains the list and the loop ends early —
+# the bug that stopped a real run three packages in. Draining stdin here keeps
+# the suite honest about it.
+cat > /dev/null 2>&1
 [ "$1" = "ls" ] && { echo "/x/serve"; echo "/x/nodemon"; exit 0; }
 exit 0
 STUB
