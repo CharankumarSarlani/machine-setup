@@ -4,7 +4,7 @@ CONFIG_DIR="$HOME/Library/Application Support/com.mitchellh.ghostty"
 CONFIG_FILE="$CONFIG_DIR/config.ghostty"
 mkdir -p "$CONFIG_DIR"
 cat > "$CONFIG_FILE" <<'EOF'
-font-size = 126
+font-size = 26
 EOF
 
 echo "Ghostty config overwritten:"
