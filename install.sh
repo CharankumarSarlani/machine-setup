@@ -760,27 +760,25 @@ EOF
 # ------------------------------------------------------------------------ main
 
 main() {
-  # setup_colors
-  # parse_args "$@"
-  # preflight
-  # setup_workspace
+  setup_colors
+  parse_args "$@"
+  preflight
+  setup_workspace
 
-  # printf '%smachine-setup%s — macOS development environment\n' "$C_BOLD" "$C_OFF"
-  # if [ "$DRY_RUN" -eq 1 ]; then
-  #   printf '%sdry run: nothing will be installed or changed%s\n' "$C_DIM" "$C_OFF"
-  # fi
+  printf '%smachine-setup%s — macOS development environment\n' "$C_BOLD" "$C_OFF"
+  if [ "$DRY_RUN" -eq 1 ]; then
+    printf '%sdry run: nothing will be installed or changed%s\n' "$C_DIM" "$C_OFF"
+  fi
 
-  # ensure_clt
-  # ensure_homebrew
-  # fetch_config
-  # install_packages
-  # install_npm_packages
-  # configure_shell
-  # configure_git
-  # configure_github
-  # summary
-
-  ghostty_config
+  ensure_clt
+  ensure_homebrew
+  fetch_config
+  install_packages
+  install_npm_packages
+  configure_shell
+  configure_git
+  configure_github
+  summary
 
   [ "$N_FAIL" -eq 0 ] || exit 2
   exit 0
